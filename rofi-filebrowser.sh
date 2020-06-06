@@ -15,6 +15,7 @@
 #
 ##################################################################################
 
+WD="${ROFI_INFO}"
 
 _exit()
 {
@@ -34,7 +35,10 @@ lsdir()
                         printf "${key}\0icon\x1f${icon}\n"
                 done
         else
-                ls --color=never -d -a -p -1 "${1}"/{.,..,*}
+                paste -d'|' \
+                        <( ls --color=never -a -p -l --ignore='.[[:alnum:]]*' "${1}" | tail -n+2 ) \
+                        <( ls --color=never -a -p -1 -d "${1}/"{.,..,*} ) \
+                        | bbe -e 's/|/\0info\x1f/'
         fi
         echo -en "\0active\x1f${pos}\n"
 }
@@ -94,7 +98,7 @@ then
         _exit
 fi
 
-path="$(realpath "$1")"
+path="$(realpath "${WD}")"
 
 if [ -d "${path}" ]
 then
