@@ -20,10 +20,6 @@ WD="${ROFI_INFO}"
 
 _exit()
 {
-        echo -en "\0prompt\x1fFiles\n"
-        echo -en "\0message\x1f${path}\r${msg}\n"
-        echo -en "\0no-custom\x1ftrue\n"
-
         rm "${lskey}" "${lsstr}"
         rmdir "${TMPDIR}"
         exit
@@ -121,6 +117,14 @@ else
         xdg-open "${path}" > /dev/null 2>&1 &
         use_parent
 fi
-lsdir "${path}"
 
+echo -en "\0markup-rows\x1ftrue\n"
+echo -en "\0prompt\x1fFiles\n"
+echo -en "\0message\x1f${path}"
+[ -n "${msg}" ] && \
+        echo -en "\r<b>${msg}</b>"
+echo
+echo -en "\0no-custom\x1ftrue\n"
+
+lsdir "${path}"
 _exit
