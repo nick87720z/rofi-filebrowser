@@ -90,6 +90,8 @@ use_parent()
 
 # Main #
 
+shopt -s dotglob
+
 mkdir -p "${TMPDIR}"
 
 if ! [ -v ROFI_FB_SHOW_ICONS ]; then
