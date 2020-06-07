@@ -59,9 +59,8 @@ use_parent()
                 then
                         break;
                 fi
-                (( pos++ ));
+                (( pos++ ))
         done
-        notify-send "Pos ${pos}"
         path="${parent}"
 }
 
