@@ -106,7 +106,7 @@ pos=0
 if   [ $# == 0 ]
 then
         path=~
-        lsdir ${path}
+        lsdir "${path}"
         _exit
 fi
 
@@ -122,6 +122,6 @@ else
         xdg-open "${path}" > /dev/null 2>&1 &
         use_parent
 fi
-
 lsdir "${path}"
+
 _exit
