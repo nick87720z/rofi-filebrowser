@@ -103,15 +103,12 @@ fi
 
 pos=0
 msg=
+path="${HOME}"
 
-if   [ $# == 0 ]
+if [ $# != 0 ]
 then
-        path=~
-        lsdir "${path}"
-        _exit
+        path="$(realpath "${WD}")"
 fi
-
-path="$(realpath "${WD}")"
 
 if [ -d "${path}" ]
 then
