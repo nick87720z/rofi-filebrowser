@@ -21,7 +21,7 @@ WD="${ROFI_INFO}"
 _exit()
 {
         echo -en "\0prompt\x1fFiles\n"
-        echo -en "\0message\x1f${path}\n"
+        echo -en "\0message\x1f${path}\r${msg}\n"
         echo -en "\0no-custom\x1ftrue\n"
 
         rm "${lskey}" "${lsstr}"
@@ -102,6 +102,7 @@ if ! [ -v ROFI_FB_SHOW_ICONS ]; then
 fi
 
 pos=0
+msg=
 
 if   [ $# == 0 ]
 then
@@ -114,8 +115,9 @@ path="$(realpath "${WD}")"
 
 if [ -d "${path}" ]
 then
-        if [ $(ls -1 "${path}" | wc -l ) == 0 ]
+        if ! [ -r "${path}" ] || ! [ -x "${path}" ]
         then
+                msg="Permission denied"
                 use_parent
         fi
 else
