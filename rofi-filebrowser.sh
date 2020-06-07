@@ -15,6 +15,7 @@
 #
 ##################################################################################
 
+TMPDIR="/dev/shm/${UID}/rofi-filebrowser-$$"
 WD="${ROFI_INFO}"
 
 _exit()
@@ -22,24 +23,33 @@ _exit()
         echo -en "\0prompt\x1fFiles\n"
         echo -en "\0message\x1f${path}\n"
         echo -en "\0no-custom\x1ftrue\n"
+
+        rm "${lskey}" "${lsstr}"
+        rmdir "${TMPDIR}"
         exit
 }
 
 lsdir()
 {
-        if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
-        then
-                ls --color=never -d -a -p -1 "${1}"/{.,..,*} | \
-                while IFS="" read -r key || [ -n "$key" ]; do
-                        icon="$( ( file -E --mime-type -nNb "${key}" || mimetype --output-format='%m' "${key}" ) | tr '/' '-' )"
-                        printf "${key}\0icon\x1f${icon}\n"
-                done
-        else
-                paste -d'|' \
-                        <( ls --color=never -a -p -l --ignore='.[[:alnum:]]*' "${1}" | tail -n+2 ) \
-                        <( ls --color=never -a -p -1 -d "${1}/"{.,..,*} ) \
-                        | bbe -e 's/|/\0info\x1f/'
-        fi
+        lskey="${TMPDIR}/lskey"; mkfifo "${lskey}"
+        lsstr="${TMPDIR}/lsstr"; mkfifo "${lsstr}"
+
+        ls --color=never -a -p -1 "${1}"             >"${lskey}" &
+        ls --color=never -a -p -l "${1}" | tail -n+2 >"${lsstr}" &
+
+        exec 10< "${lskey}"
+        exec 11< "${lsstr}"
+        while read -u10 -t0.2 key ; do
+                read -u11 -t0.2 str
+                echo -en "${str}\x00info\x1f${1}/${key}"
+
+                if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
+                then
+                        icon="$( { file -E --mime-type -nNb "${1}/${key}" || mimetype --output-format='%m' "${1}/${key}"; } | tr '/' '-' )"
+                        echo -en "\x1ficon\x1f${icon}"
+                fi
+                echo
+        done
         echo -en "\0active\x1f${pos}\n"
 }
 
@@ -84,6 +94,8 @@ use_parent()
 #notify-send -u critical "Test" "fg2: ${fg2}\nfg3: ${fg3}\nfg2a: ${fg2a[*]}\nfg3a: ${fg3a[*]}\nfg_src: ${fg_src}"
 
 # Main #
+
+mkdir -p "${TMPDIR}"
 
 if ! [ -v ROFI_FB_SHOW_ICONS ]; then
         ROFI_FB_SHOW_ICONS=0
