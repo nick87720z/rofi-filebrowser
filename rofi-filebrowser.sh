@@ -20,7 +20,7 @@ WD="${ROFI_INFO}"
 
 declare -A cols
 eval $( dircolors )
-eval $( echo -ne 'cols=( '; echo -ne $LS_COLORS | tr ':' '\n' | sed -e 's/=/\\\"]=\"/; s/^/[\\\"/; /^\[$/d; s/$/\"/;' | tr '\n' ' '; echo ')' )
+eval 'cols=('$( echo -ne $LS_COLORS | tr ':' '\n' | sed -e 's/=/\\\"]=\"/; s/^/[\\\"/; /^\[$/d; s/$/\"/;' | tr '\n' ' ' )' )'
 
 COLORS_FG=( [30]=black [31]=red [32]=green [33]=yellow [34]=blue [35]=magenta [36]=cyan [37]=white )
 COLORS_BG=( [40]=black [41]=red [42]=green [43]=yellow [44]=blue [45]=magenta [46]=cyan [47]=white )
