@@ -48,8 +48,15 @@ lsdir()
                 fg=
                 bg=
                 case "${str:0:1}" in
+                        b) style="bd" ;;
+                        c) style="cd" ;;
+                        C) style="ca" ;;
                         d) style='di' ;;
-                        *) style= ;;
+                        D) style='do' ;;
+                        l) style="ln" ;;
+                        p) style="pi" ;;
+                        s) style="so" ;;
+                        *) style=     ;;
                 esac
                 if [ -n "${style}" ] ; then
                         props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
