@@ -120,7 +120,6 @@ else
 fi
 
 echo -en "\0markup-rows\x1ftrue\n"
-echo -en "\0prompt\x1fFiles\n"
 echo -en "\0message\x1f${path}"
 [ -n "${msg}" ] && \
         echo -en "\r<b>${msg}</b>"
