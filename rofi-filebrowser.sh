@@ -37,11 +37,13 @@ lsdir()
         lskey="${TMPDIR}/lskey"; mkfifo "${lskey}"
         lsstr="${TMPDIR}/lsstr"; mkfifo "${lsstr}"
 
-        ls --color=never -a -1   "${1}"             >"${lskey}" &
-        ls --color=never -a -lph "${1}" | tail -n+2 >"${lsstr}" &
+        ls --color=never -a -1   "${1}" >"${lskey}" &
+        ls --color=never -a -lph "${1}" >"${lsstr}" &
 
         exec 10< "${lskey}"
         exec 11< "${lsstr}"
+
+        read -u11 -t0.2 sum
         while read -u10 -t0.2 key ; do
                 read -u11 -t0.2 str
 
