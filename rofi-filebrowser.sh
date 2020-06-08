@@ -78,6 +78,9 @@ lsdir()
                            fi
                         ;;
                 esac
+                if [ -z "${style}" ] ; then
+                        style='*.'"${key##*.}"
+                fi
                 if [ -n "${style}" ] ; then
                         props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
                         if [ -n "${props[*]}" ] ; then
