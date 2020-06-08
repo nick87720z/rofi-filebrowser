@@ -55,13 +55,11 @@ lsdir()
                         props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
                         if [ -n "${props[*]}" ] ; then
                                 for p in "${props[@]}"; do
-                                        fg="${COLORS_FG["${p}"]}"
-                                        if [ -n "${fg}" ]
-                                                then break
+                                        if [ -z "${fg}" ]; then
+                                                fg="${COLORS_FG["${p}"]}"
                                         fi
-                                        bg="${COLORS_BG["${p}"]}"
-                                        if [ -n "${bg}" ]
-                                                then break
+                                        if [ -z "${bg}" ]; then
+                                                bg="${COLORS_BG["${p}"]}"
                                         fi
                                 done
                         fi
