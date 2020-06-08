@@ -37,8 +37,18 @@ lsdir()
         exec 11< "${lsstr}"
         while read -u10 -t0.2 key ; do
                 read -u11 -t0.2 str
-                echo -en "${str}\x00info\x1f${1}/${key}"
+                case "${str:0:1}" in
+                        d) color=slateblue ;;
+                        *) color= ;;
+                esac
 
+                if [ -n "${color}" ] ; then
+                        echo -en "<span foreground=\"${color}\">${str}</span>"
+                else
+                        echo -en "${str}"
+                fi
+
+                echo -en "\x00info\x1f${1}/${key}"
                 if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
                 then
                         icon="$( { file -E --mime-type -nNb "${1}/${key}" || mimetype --output-format='%m' "${1}/${key}"; } | tr '/' '-' )"
