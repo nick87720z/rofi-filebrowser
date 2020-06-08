@@ -47,6 +47,7 @@ lsdir()
 
                 fg=
                 bg=
+                style=
                 case "${str:0:1}" in
                         b) style="bd" ;;
                         c) style="cd" ;;
@@ -56,7 +57,22 @@ lsdir()
                         l) style="ln" ;;
                         p) style="pi" ;;
                         s) style="so" ;;
-                        *) style=     ;;
+                        *) if [ "${str:3:1}" == 's' ] || [ "${str:3:1}" == 'S' ]
+                                then style="su"
+                           elif [ "${str:6:1}" == 's' ] || [ "${str:6:1}" == 'S' ]
+                                then style="sg"
+                           elif [ "${str:3:1}" == 'x' ] || [ "${str:6:1}" == 'x' ] || [ "${str:9:1}" == 'x' ]
+                                then style="ex"
+                           fi
+
+                           if [ "${str:8:1}" == 'wt' ] || [ "${str:8:1}" == 'wT' ]
+                                then style="tw"
+                           elif [ "${str:9:1}" == 't' ] || [ "${str:9:1}" == 'T' ]
+                                then style="st"
+                           elif [ "${str:8:1}" == 'w' ]
+                                then style="ow"
+                           fi
+                        ;;
                 esac
                 if [ -n "${style}" ] ; then
                         props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
