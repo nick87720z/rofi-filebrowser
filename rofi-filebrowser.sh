@@ -37,8 +37,8 @@ lsdir()
         lskey="${TMPDIR}/lskey"; mkfifo "${lskey}"
         lsstr="${TMPDIR}/lsstr"; mkfifo "${lsstr}"
 
-        ls --color=never -a -p -1 "${1}"             >"${lskey}" &
-        ls --color=never -a -p -l "${1}" | tail -n+2 >"${lsstr}" &
+        ls --color=never -a -1   "${1}"             >"${lskey}" &
+        ls --color=never -a -lph "${1}" | tail -n+2 >"${lsstr}" &
 
         exec 10< "${lskey}"
         exec 11< "${lsstr}"
