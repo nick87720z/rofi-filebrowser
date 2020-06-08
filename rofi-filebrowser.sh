@@ -54,7 +54,11 @@ lsdir()
                         C) style="ca" ;;
                         d) style='di' ;;
                         D) style='do' ;;
-                        l) style="ln" ;;
+                        l) if readlink -e "${1}/${key}"
+                                then style="ln"
+                                else style="or"
+                           fi
+                        ;;
                         p) style="pi" ;;
                         s) style="so" ;;
                         *) if [ "${str:3:1}" == 's' ] || [ "${str:3:1}" == 'S' ]
