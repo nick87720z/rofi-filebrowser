@@ -18,6 +18,13 @@
 TMPDIR="/dev/shm/${UID}/rofi-filebrowser-$$"
 WD="${ROFI_INFO}"
 
+declare -A cols
+eval $( dircolors )
+eval $( echo -ne 'cols=( '; echo -ne $LS_COLORS | tr ':' '\n' | sed -e 's/=/\\\"]=\"/; s/^/[\\\"/; /^\[$/d; s/$/\"/;' | tr '\n' ' '; echo ')' )
+
+COLORS_FG=( [30]=black [31]=red [32]=green [33]=yellow [34]=blue [35]=magenta [36]=cyan [37]=white )
+COLORS_BG=( [40]=black [41]=red [42]=green [43]=yellow [44]=blue [45]=magenta [46]=cyan [47]=white )
+
 _exit()
 {
         rm "${lskey}" "${lsstr}"
@@ -37,13 +44,37 @@ lsdir()
         exec 11< "${lsstr}"
         while read -u10 -t0.2 key ; do
                 read -u11 -t0.2 str
-                case "${str:0:1}" in
-                        d) color=slateblue ;;
-                        *) color= ;;
-                esac
 
-                if [ -n "${color}" ] ; then
-                        echo -en "<span foreground=\"${color}\">${str}</span>"
+                fg=
+                bg=
+                case "${str:0:1}" in
+                        d) style='di' ;;
+                        *) style= ;;
+                esac
+                if [ -n "${style}" ] ; then
+                        props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
+                        if [ -n "${props[*]}" ] ; then
+                                for p in "${props[@]}"; do
+                                        fg="${COLORS_FG["${p}"]}"
+                                        if [ -n "${fg}" ]
+                                                then break
+                                        fi
+                                        bg="${COLORS_BG["${p}"]}"
+                                        if [ -n "${bg}" ]
+                                                then break
+                                        fi
+                                done
+                        fi
+                fi
+                if [ -n "${fg}${bg}" ] ; then
+                        echo -en "<span"
+                        if [ -n "${fg}" ] ; then
+                                echo -en " foreground=\"${fg}\""
+                        fi
+                        if [ -n "${bg}" ] ; then
+                                echo -en " background=\"${bg}\""
+                        fi
+                        echo -en ">${str}</span>"
                 else
                         echo -en "${str}"
                 fi
