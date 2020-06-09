@@ -59,66 +59,72 @@ lsdir()
                 fg=
                 bg=
                 style=
-                case "${str:0:1}" in
-                        b) style="bd" ;;
-                        c) style="cd" ;;
-                        C) style="ca" ;;
-                        d) style='di' ;;
-                        D) style='do' ;;
-                        l) if readlink -e "${1}/${key}"
-                                then style="ln"
-                                else style="or"
-                           fi
-                        ;;
-                        p) style="pi" ;;
-                        s) style="so" ;;
-                        *) if [ "${str:3:1}" == 's' ] || [ "${str:3:1}" == 'S' ]
-                                then style="su"
-                           elif [ "${str:6:1}" == 's' ] || [ "${str:6:1}" == 'S' ]
-                                then style="sg"
-                           elif [ "${str:3:1}" == 'x' ] || [ "${str:6:1}" == 'x' ] || [ "${str:9:1}" == 'x' ]
-                                then style="ex"
-                           fi
+                if [ "x${ROFI_FB_COLORS}" == "x1" ]
+                then
+                        case "${str:0:1}" in
+                                b) style="bd" ;;
+                                c) style="cd" ;;
+                                C) style="ca" ;;
+                                d) style='di' ;;
+                                D) style='do' ;;
+                                l) if readlink -e "${1}/${key}"
+                                        then style="ln"
+                                        else style="or"
+                                   fi
+                                ;;
+                                p) style="pi" ;;
+                                s) style="so" ;;
+                                *) if [ "${str:3:1}" == 's' ] || [ "${str:3:1}" == 'S' ]
+                                        then style="su"
+                                   elif [ "${str:6:1}" == 's' ] || [ "${str:6:1}" == 'S' ]
+                                        then style="sg"
+                                   elif [ "${str:3:1}" == 'x' ] || [ "${str:6:1}" == 'x' ] || [ "${str:9:1}" == 'x' ]
+                                        then style="ex"
+                                   fi
 
-                           if [ "${str:8:1}" == 'wt' ] || [ "${str:8:1}" == 'wT' ]
-                                then style="tw"
-                           elif [ "${str:9:1}" == 't' ] || [ "${str:9:1}" == 'T' ]
-                                then style="st"
-                           elif [ "${str:8:1}" == 'w' ]
-                                then style="ow"
-                           fi
-                        ;;
-                esac
-                if [ -z "${style}" ] ; then
-                        style='*.'"${key##*.}"
-                fi
-                if [ -n "${style}" ] ; then
-                        props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
-                        if [ -n "${props[*]}" ] ; then
-                                for p in "${props[@]}"; do
-                                        if [ -z "${fg}" ]; then
-                                                fg="${COLORS_FG["${p}"]}"
-                                        fi
-                                        if [ -z "${bg}" ]; then
-                                                bg="${COLORS_BG["${p}"]}"
-                                        fi
-                                done
+                                   if [ "${str:8:1}" == 'wt' ] || [ "${str:8:1}" == 'wT' ]
+                                        then style="tw"
+                                   elif [ "${str:9:1}" == 't' ] || [ "${str:9:1}" == 'T' ]
+                                        then style="st"
+                                   elif [ "${str:8:1}" == 'w' ]
+                                        then style="ow"
+                                   fi
+                                ;;
+                        esac
+                        if [ -z "${style}" ] ; then
+                                style='*.'"${key##*.}"
                         fi
-                fi
-                if [ -n "${fg}${bg}" ] ; then
-                        echo -en "<span"
-                        if [ -n "${fg}" ] ; then
-                                echo -en " foreground=\"${fg}\""
+                        if [ -n "${style}" ] ; then
+                                props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
+                                if [ -n "${props[*]}" ] ; then
+                                        for p in "${props[@]}"; do
+                                                if [ -z "${fg}" ]; then
+                                                        fg="${COLORS_FG["${p}"]}"
+                                                fi
+                                                if [ -z "${bg}" ]; then
+                                                        bg="${COLORS_BG["${p}"]}"
+                                                fi
+                                        done
+                                fi
                         fi
-                        if [ -n "${bg}" ] ; then
-                                echo -en " background=\"${bg}\""
+                        if [ -n "${fg}${bg}" ] ; then
+                                echo -en "<span"
+                                if [ -n "${fg}" ] ; then
+                                        echo -en " foreground=\"${fg}\""
+                                fi
+                                if [ -n "${bg}" ] ; then
+                                        echo -en " background=\"${bg}\""
+                                fi
+                                echo -en ">${str}</span>"
+                        else
+                                echo -en "${str}"
                         fi
-                        echo -en ">${str}</span>"
                 else
                         echo -en "${str}"
                 fi
 
                 echo -en "\x00info\x1f${1}/${key}"
+
                 if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
                 then
                         read -u12 -t0.2 icon
@@ -155,6 +161,10 @@ mkdir -p "${TMPDIR}"
 
 if ! [ -v ROFI_FB_SHOW_ICONS ]; then
         ROFI_FB_SHOW_ICONS=0
+fi
+if ! [ -v ROFI_FB_COLORS ]
+then
+        ROFI_FB_COLORS=0
 fi
 
 pos=0
