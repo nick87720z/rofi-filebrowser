@@ -53,7 +53,8 @@ lsdir()
         exec 11< "${lsstr}"
 
         read -u11 -t0.2 sum
-        while read -u10 -t0.2 key ; do
+        while read -u10 -t0.2 key
+        do
                 read -u11 -t0.2 str
 
                 fg=
@@ -94,10 +95,13 @@ lsdir()
                         if [ -z "${style}" ] ; then
                                 style='*.'"${key##*.}"
                         fi
-                        if [ -n "${style}" ] ; then
+                        if [ -n "${style}" ]
+                        then
                                 props=( $( tr ';' ' ' <<< ${cols[\"${style}\"]} ) )
-                                if [ -n "${props[*]}" ] ; then
-                                        for p in "${props[@]}"; do
+                                if [ -n "${props[*]}" ]
+                                then
+                                        for p in "${props[@]}"
+                                        do
                                                 if [ -z "${fg}" ]; then
                                                         fg="${COLORS_FG["${p}"]}"
                                                 fi
@@ -107,7 +111,8 @@ lsdir()
                                         done
                                 fi
                         fi
-                        if [ -n "${fg}${bg}" ] ; then
+                        if [ -n "${fg}${bg}" ]
+                        then
                                 echo -en "<span"
                                 if [ -n "${fg}" ] ; then
                                         echo -en " foreground=\"${fg}\""
@@ -144,8 +149,7 @@ use_parent()
         pos=2
         for f in "${parent}"/*
         do
-                if [ "${f}" == "${path}" ]
-                then
+                if [ "${f}" == "${path}" ]; then
                         break;
                 fi
                 (( pos++ ))
@@ -162,8 +166,7 @@ mkdir -p "${TMPDIR}"
 if ! [ -v ROFI_FB_SHOW_ICONS ]; then
         ROFI_FB_SHOW_ICONS=0
 fi
-if ! [ -v ROFI_FB_COLORS ]
-then
+if ! [ -v ROFI_FB_COLORS ]; then
         ROFI_FB_COLORS=0
 fi
 
@@ -171,8 +174,7 @@ pos=0
 msg=
 path="${HOME}"
 
-if [ $# != 0 ]
-then
+if [ $# != 0 ]; then
         path="$(realpath "${WD}")"
 fi
 
