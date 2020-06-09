@@ -127,7 +127,7 @@ lsdir()
 
                 if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
                 then
-                        read -u12 -t0.2 icon
+                        read -u12 icon
                         if [ -z "${icon}" ] ; then
                                 icon=$( mimetype --output-format="%m" "${key}" | tr '/' '-' )
                         fi
