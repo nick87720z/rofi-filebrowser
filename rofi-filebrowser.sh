@@ -28,7 +28,7 @@ COLORS_BG=( [40]=black [41]=red [42]=green [43]=yellow [44]=blue [45]=magenta [4
 _exit()
 {
         rm "${lskey}" "${lsstr}"
-        rmdir "${TMPDIR}"
+        rm -r "${TMPDIR}"
         exit
 }
 
@@ -37,8 +37,17 @@ lsdir()
         lskey="${TMPDIR}/lskey"; mkfifo "${lskey}"
         lsstr="${TMPDIR}/lsstr"; mkfifo "${lsstr}"
 
+        cd "${1}"
+
         ls --color=never -a -1   "${1}" >"${lskey}" &
         ls --color=never -a -lph "${1}" >"${lsstr}" &
+
+        if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
+        then
+                lsmim="${TMPDIR}/lsmim"; mkfifo "${lsmim}"
+                ls --color=never -a -1 "${1}" | file --mime-type -nNb --files-from - | tr '/' '-' >"${lsmim}" &
+                exec 12< "${lsmim}"
+        fi
 
         exec 10< "${lskey}"
         exec 11< "${lsstr}"
@@ -112,7 +121,10 @@ lsdir()
                 echo -en "\x00info\x1f${1}/${key}"
                 if [ "x${ROFI_FB_SHOW_ICONS}" == "x1" ]
                 then
-                        icon="$( { file -E --mime-type -nNb "${1}/${key}" || mimetype --output-format='%m' "${1}/${key}"; } | tr '/' '-' )"
+                        read -u12 -t0.2 icon
+                        if [ -z "${icon}" ] ; then
+                                icon=$( mimetype --output-format="%m" "${key}" | tr '/' '-' )
+                        fi
                         echo -en "\x1ficon\x1f${icon}"
                 fi
                 echo
